@@ -281,7 +281,7 @@ export function calculateCompleteDPR(
 
 function getRogueLevel(build: BuildConfiguration): number {
   const sneakFeature = build.classFeatures.find(f => 
-    f.id === 'sneak_attack' || f.name === 'Sneak Attack' || f.name === 'sneak_attack')
+    f.name === 'Sneak Attack' || f.name === 'sneak_attack')
   
   if (!sneakFeature || typeof sneakFeature.value !== 'number') return 0
   
@@ -342,8 +342,7 @@ function canSneakAttack(attack: Attack, build: BuildConfiguration): boolean {
 function hasGWMOrSS(build: BuildConfiguration): boolean {
   return build.classFeatures.some(f => 
     f.name === 'great_weapon_master' || f.name === 'Great Weapon Master' ||
-    f.name === 'sharpshooter' || f.name === 'Sharpshooter' ||
-    f.id === 'great_weapon_master' || f.id === 'sharpshooter'
+    f.name === 'sharpshooter' || f.name === 'Sharpshooter'
   )
 }
 
