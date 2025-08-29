@@ -1,0 +1,14 @@
+:root {
+  /* Design Tokens - Modern-Fantasy Skin (canonical names) */
+  --bg: #0F1318;         /* app chrome (header/sidebar) */
+  --panel: #EDE2CB;      /* parchment cards */
+  --ink: #1E232A;        /* primary text on parchment */
+  --muted: #4F5A66;      /* secondary text */
+  --accent: #63CBFF;     /* arcane blue (focus, charts) */
+  --gold: #C8A86B;       /* dividers/highlights */
+  --emerald: #89B57D;    /* success */
+  --border: #D8C9A5;     /* etched borders */
+  --danger: #BE4B49;
+  --radius: 16px;
+  --shadow: 0 1px 0 rgba(0,0,0,.10), inset 0 0 0 1px var(--border);
+}

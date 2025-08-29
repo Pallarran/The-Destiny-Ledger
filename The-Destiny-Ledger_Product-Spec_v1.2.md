@@ -1,4 +1,5 @@
 # The Destiny Ledger — Product Specification (v1.1)
+**Version:** v1.2 — 2025-08-29
 
 ## 1) Mission & Overview
 **The Destiny Ledger** is a browser-based D&D 5e optimizer and character comparison tool. It lets players build full characters (SRD at launch), simulate 3-round nova DPR using closed-form math, visualize non-DPR strengths on a radar chart, and compare up to three builds side-by-side. A Level Path Explorer analyzes level order permutations with constraints to maximize level-20 DPR by default.
@@ -119,66 +120,90 @@
 **Results**
 - Side-by-side comparison of up to 3 candidate orders; per-level timeline; milestone badges; per-level DPR sparkline.
 
-## 9) UX & Visual Design (implementable brief)
-**Overall vibe**: *Modern app on parchment*. Clean layout first; fantasy accents second (ledger corners, rune ornaments, arcane-blue glows).
+## 9) UX & Visual Design — Modern‑Fantasy Skin (Authoritative)
 
-**Layout**
-- Dark chrome header/footer; parchment content panels; generous whitespace.
-- Rounded cards (16–20px), etched borders, subtle paper noise, gentle inner shadows.
-- Page frames: header with logo + page title + thin gold divider.
+**Intent:** Modern app first (grid, spacing, contrast, motion discipline), fantasy accents second (parchment panels, light rune corners on select components, arcane‑blue focus/lines).
 
-**Typography**
-- Headings (fantasy accent): **Cinzel** or **Cormorant Garamond** via Google Fonts.
-- Body/UI: **Inter** (fallback `system-ui`).
-- Use `clamp()` to scale sizes; slightly tight tracking on headings.
+### Layout & Density
+- App chrome is dark; content lives on **parchment panels** with generous whitespace.
+- Spacing scale = 8px; section titles sit in a slim dark bar with a thin **gold** divider.
+- Keep panels flat; use **etched borders** and **micro inner shadow** only—no heavy bevels or drop shadows.
 
-**Color tokens**
-- `bg/chrome`: `#0F1318` (app background & header)
-- `panel/parchment`: `#EDE2CB` (cards/panels)
-- `ink`: `#1E232A` (primary text)
-- `muted-ink`: `#4F5A66`
-- `accent-arcane`: `#63CBFF` (glows, chart lines)
-- `accent-gold`: `#C8A86B` (dividers, highlights)
-- `accent-emerald`: `#89B57D` (success/OK)
-- `border-etch`: `#D8C9A5` (panel borders)
-- `danger`: `#BE4B49`
+### Typography
+- **Headings:** Cinzel *or* Cormorant Garamond (H1–H2 only).
+- **Body/UI:** Inter everywhere else. Use CSS `clamp()` for fluid type scales.
 
-**Surfaces & effects**
-- Parchment card: noise overlay + inner shadow + etched 1px border.
-- Rune corners: 4 small **SVG** corner ornaments absolutely positioned.
-- Arcane glow: outer drop-shadow using `accent-arcane → transparent` gradient.
-
-**Component feel**
-- **Card/Panel**: parchment, radius `var(--radius)`, `box-shadow: var(--shadow)`.
-- **Tabs/Segmented**: pill tabs; gold indicator line; active tab lifts ~2px.
-- **Form controls**: shadcn/radix components reskinned to parchment; focus ring in arcane blue.
-- **Validation bar**: parchment banner with icon; red for errors, gold for warnings.
-- **Charts**: Recharts (Line & Radar). Overlay 3 DPR curves (normal/adv/disadv); radar at ~35% fill with thin outline.
-- **Compare list**: build tiles with class icon, subclass, enable toggle.
-- **Level Path Explorer tiles**: parchment cards with tiny DPR sparkline + milestone badges (circular sigils).
-
-**Motion**
-- Subtle: 120–160ms ease-out; Framer Motion for page fade/slide and chart tooltip micro-scale.
-
-**Accessibility**
-- Text vs parchment AA contrast; keyboard navigation; `:focus-visible` rings; tooltips for icon-only controls.
-
-**Design tokens (CSS)**
+### Design Tokens (canonical names — do not rename)
 ```css
 :root{
-  --bg:#0F1318; --panel:#EDE2CB; --ink:#1E232A; --muted:#4F5A66;
-  --accent:#63CBFF; --gold:#C8A86B; --emerald:#89B57D; --border:#D8C9A5; --danger:#BE4B49;
+  --bg:#0F1318;         /* app chrome (header/sidebar) */
+  --panel:#EDE2CB;      /* parchment cards */
+  --ink:#1E232A;        /* primary text on parchment */
+  --muted:#4F5A66;      /* secondary text */
+  --accent:#63CBFF;     /* arcane blue (focus, charts) */
+  --gold:#C8A86B;       /* dividers/highlights */
+  --emerald:#89B57D;    /* success */
+  --border:#D8C9A5;     /* etched borders */
+  --danger:#BE4B49;
   --radius:16px;
   --shadow:0 1px 0 rgba(0,0,0,.10), inset 0 0 0 1px var(--border);
 }
-.panel{background:var(--panel); color:var(--ink); box-shadow:var(--shadow);}
-.glow{filter: drop-shadow(0 0 8px rgba(99,203,255,.45));}
 ```
 
-**Chart theming (Recharts)**
-- Lines: `strokeWidth=3`; use CSS vars (`stroke="var(--accent)"` for advantage, toned variants for others).
-- Dots: only on key AC values; gridlines faint; legend minimal.
-- Radar: `fill: color-mix(in srgb, var(--accent) 35%, transparent); stroke: var(--accent);`
+### Surfaces & Accents
+- **Parchment panel** = `background: var(--panel)` + subtle paper‑noise overlay **≤ 6% opacity** + `box-shadow: var(--shadow)` + `border-radius: var(--radius)`.
+- **Rune corners (SVG)** appear **only** on large hero panels and ability score cards; opacity 35–45%.
+- **Focus rings & “magic” glow** use `--accent` with a subtle drop shadow; respect `prefers-reduced-motion`.
+
+### Components (shadcn/radix reskin)
+- **Tabs / Segmented control:** pill tabs; thin **gold** indicator; active tab elevates 2px.
+- **Form controls:** neutral fills; `:focus-visible` in **accent blue**; all labels visible.
+- **Validation bar:** parchment banner; `--danger` for errors, **gold** for warnings.
+- **Cards/Panels:** `.panel` utility applies `bg-panel text-ink rounded-[var(--radius)] shadow-[var(--shadow)]`.
+
+### Charts (Recharts)
+- **DPR line chart:** three curves (Normal / Advantage / Disadvantage), `strokeWidth=3`, dots only at AC ticks; faint gridlines; minimal legend.
+- **Radar (Non‑DPR roles):** ~35% fill with thin stroke; hover tooltips.
+
+### Motion & Accessibility
+- Motion 120–160ms ease‑out; no parallax or bouncy easing.
+- AA contrast on parchment; full keyboard navigation; visible `:focus-visible` rings; chart lines meet contrast on `--panel`.
+- Respect `prefers-reduced-motion` by disabling nonessential transitions and glows.
+
+### Visual Acceptance (must resemble provided concept images)
+- **DPR Lab:** left config on parchment; right chart with three lines; SS/GWM table in a dark slate sub‑card.
+- **Compare Builds:** radar left, DPR chart right; per‑build SS/GWM readouts as dark sub‑cards.
+- **Character Builder:** stat **cards** with light rune corners; right **Level Timeline** with circular milestone badges.
+- **Level Path Explorer:** 3–4 parchment **tiles** with micro DPR sparklines + milestone badges.
+
+### Engineering Notes
+**Stack:** React 18 + TypeScript + Vite; Tailwind + shadcn/ui; Recharts; Framer Motion.
+
+**Tailwind theme**
+```ts
+// tailwind.config.ts (extend)
+colors: {
+  bg: "var(--bg)", panel: "var(--panel)", ink: "var(--ink)", muted: "var(--muted)",
+  accent: "var(--accent)", gold: "var(--gold)", emerald: "var(--emerald)",
+  border: "var(--border)", danger: "var(--danger)"
+},
+borderRadius: { xl: "var(--radius)" },
+boxShadow: { etched: "var(--shadow)" }
+```
+
+**Global CSS**
+```css
+body{ background:var(--bg); color:var(--ink); }
+.panel{ background:var(--panel); color:var(--ink); border-radius:var(--radius); box-shadow:var(--shadow); }
+.glow{ filter: drop-shadow(0 0 8px rgba(99,203,255,.45)); }
+```
+
+**Fonts:** Load Cinzel/Cormorant + Inter via Google Fonts; map H1–H2 to the serif, everything else to Inter.
+
+**Charts:** Use CSS vars for strokes; `stroke="var(--accent)"` for Advantage; mix with black/white for Normal/Disadvantage; `strokeWidth=3`.
+
+### Guardrail (place near the top of the spec)
+> Implement the **Modern‑Fantasy Skin** exactly as defined in Section 9. Use the named tokens and component rules. If library defaults conflict, override toward parchment panels with etched borders, serif headings, and arcane‑blue focus/lines—**but keep modern spacing and restraint** (no heavy textures or bevels).
 
 ## 10) Tech Stack & Architecture (Pages-friendly)
 - **Framework**: React 18 + TypeScript + Vite (static build; SPA).
