@@ -3,10 +3,13 @@ import { Navigation } from '../components/Navigation'
 
 export function Layout() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-parchment-50 to-parchment-100 bg-ledger-texture">
+    <div className="min-h-screen bg-gray-50">
+      {/* Modern Navigation */}
       <Navigation />
-      <main className="container mx-auto py-8 px-4">
-        <div className="bg-parchment-50/90 backdrop-blur-sm rounded-lg border border-parchment-200 shadow-lg p-6">
+      
+      {/* Main Content Area */}
+      <main className="flex-1">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <Outlet />
         </div>
       </main>
