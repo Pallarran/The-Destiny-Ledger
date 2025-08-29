@@ -63,6 +63,28 @@ export function calculateGWMThreshold(
 }
 
 /**
+ * Calculate optimal choice (GWM/SS vs normal) for a specific AC
+ */
+export function calculateOptimalChoice(
+  params: GWMSSParams,
+  targetAC: number
+): {
+  useGWM: boolean
+  dpr: number
+  regularDPR: number
+  gwmDPR: number
+} {
+  const result = calculateGWMThreshold(params, targetAC)
+  
+  return {
+    useGWM: result.useGWM,
+    dpr: Math.max(result.withGWM.dpr, result.withoutGWM.dpr),
+    regularDPR: result.withoutGWM.dpr,
+    gwmDPR: result.withGWM.dpr
+  }
+}
+
+/**
  * Find the AC threshold where GWM/SS becomes ineffective
  */
 export function findGWMBreakpoint(
@@ -90,6 +112,17 @@ export function findGWMBreakpoint(
   }
   
   return Math.min(breakpoint, max)
+}
+
+/**
+ * Find multiple GWM/SS breakpoints (alias for compatibility)
+ */
+export function findGWMBreakpoints(
+  params: GWMSSParams,
+  acRange?: { min: number; max: number }
+): number[] {
+  const breakpoint = findGWMBreakpoint(params, acRange)
+  return [breakpoint]
 }
 
 /**

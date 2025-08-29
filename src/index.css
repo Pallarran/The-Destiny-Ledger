@@ -61,6 +61,44 @@
 
 @layer base {
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-serif;
+  }
+  
+  /* Custom scrollbar for fantasy theme */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: theme(colors.parchment.100);
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: theme(colors.arcane.400);
+    border-radius: 4px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: theme(colors.arcane.500);
+  }
+}
+
+@layer components {
+  /* Fantasy themed button variants */
+  .btn-arcane {
+    @apply bg-arcane-600 hover:bg-arcane-700 text-white font-serif font-medium px-4 py-2 rounded-lg transition-colors shadow-md hover:shadow-lg;
+  }
+  
+  .btn-parchment {
+    @apply bg-parchment-200 hover:bg-parchment-300 text-arcane-800 font-serif font-medium px-4 py-2 rounded-lg transition-colors border border-parchment-300;
+  }
+  
+  /* Fantasy card styling */
+  .card-fantasy {
+    @apply bg-parchment-50/80 border border-parchment-200 rounded-lg shadow-sm backdrop-blur-sm;
+  }
+  
+  .card-fantasy:hover {
+    @apply shadow-md border-arcane-200;
   }
 }

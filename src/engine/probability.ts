@@ -15,17 +15,18 @@ export function calculateHitProbability(
   const rawHitChance = (21 + attackBonus - targetAC) / 20
   const baseHit = Math.max(0, Math.min(1, rawHitChance))
   
-  // Crit probability - always hits on natural 20 (or improved range)
-  const critThreshold = 21 - critRange
-  const baseCrit = critRange / 20
+  // Crit probability - based on critical hit range
+  // critRange 20 = natural 20 only (1/20 = 0.05)
+  // critRange 19 = natural 19-20 (2/20 = 0.10)  
+  const baseCrit = (21 - critRange) / 20
   
-  // Ensure crit is within hit probability bounds
-  const actualCrit = Math.min(baseCrit, baseHit)
+  // Total hit probability = normal hits OR crits (crits always hit)
+  const totalHit = Math.max(baseHit, baseCrit)
   
   return {
-    pHit: baseHit,
-    pCrit: actualCrit,
-    pMiss: 1 - baseHit
+    pHit: totalHit,
+    pCrit: baseCrit,
+    pMiss: 1 - totalHit
   }
 }
 
@@ -127,6 +128,35 @@ export function calculateAttackDamage(
   const expectedDamage = pCrit * critDamage + (pHit - pCrit) * normalDamage
   
   return expectedDamage
+}
+
+/**
+ * Calculate expected value for Great Weapon Fighting reroll mechanics
+ * Rerolls 1s and 2s once on weapon damage dice
+ */
+export function calculateGreatWeaponFightingExpectedValue(
+  diceSides: number,
+  diceCount: number = 1
+): number {
+  if (diceSides < 3) {
+    // For d2 or lower, rerolling doesn't improve expected value
+    return diceCount * (diceSides + 1) / 2
+  }
+  
+  // Probability of rolling 1 or 2
+  const rerollProb = 2 / diceSides
+  const keepProb = 1 - rerollProb
+  
+  // Expected value when keeping the roll (3 to diceSides)
+  const expectedKeep = (3 + diceSides) / 2
+  
+  // Expected value when rerolling (1 to diceSides average)
+  const expectedReroll = (1 + diceSides) / 2
+  
+  // Overall expected value per die
+  const expectedPerDie = keepProb * expectedKeep + rerollProb * expectedReroll
+  
+  return diceCount * expectedPerDie
 }
 
 /**

@@ -1,6 +1,6 @@
 // Damage calculation utilities
 
-import { DamageRoll, FightingStyle } from './types'
+import { DamageRoll, FightingStyle, DamageInput } from './types'
 
 /**
  * Parse a damage string like "1d6+3" or "2d8-1" into components
@@ -46,10 +46,13 @@ export function calculateExpectedDamage(diceString: string): number {
 export function parseDiceNotation(dice: string): { count: number; sides: number; average: number } {
   const match = dice.match(/(\d+)d(\d+)/)
   if (!match) {
-    // Handle flat numbers
+    // Handle flat numbers and zero
     const flatValue = parseInt(dice)
     if (!isNaN(flatValue)) {
-      return { count: 1, sides: flatValue, average: flatValue }
+      if (flatValue === 0) {
+        return { count: 0, sides: 0, average: 0 }
+      }
+      return { count: 0, sides: 0, average: flatValue } // Flat modifier, no dice
     }
     throw new Error(`Invalid dice notation: ${dice}`)
   }
@@ -167,6 +170,9 @@ export function calculateCriticalDamage(
  * Starts at 1d6 at level 1, increases by 1d6 every 2 levels
  */
 export function calculateSneakAttackDamage(rogueLevel: number): number {
+  if (rogueLevel <= 0) return 0
+  if (rogueLevel > 20) rogueLevel = 20 // Cap at level 20
+  
   const sneakDice = Math.ceil(rogueLevel / 2)
   return sneakDice * 3.5 // Average of d6
 }
@@ -174,16 +180,7 @@ export function calculateSneakAttackDamage(rogueLevel: number): number {
 /**
  * Comprehensive damage calculation for a single attack
  */
-export interface DamageCalculationParams {
-  baseDamage: DamageRoll
-  critBonus?: DamageRoll
-  fightingStyles?: FightingStyle[]
-  weaponType?: 'one_handed' | 'two_handed' | 'ranged'
-  sneakAttackLevel?: number
-  buffs?: Array<{ name: string; damage: DamageRoll }>
-}
-
-export function calculateCompleteDamage(params: DamageCalculationParams): {
+export function calculateCompleteDamage(params: DamageInput): {
   normalDamage: number
   critDamage: number
 } {
@@ -196,32 +193,83 @@ export function calculateCompleteDamage(params: DamageCalculationParams): {
     buffs = []
   } = params
   
+  // Determine the dice to use for this weapon
+  let weaponDice = baseDamage.baseDice
+  if (weaponType === 'versatile_two_handed' && baseDamage.versatileDice) {
+    weaponDice = baseDamage.versatileDice
+  }
+  
   // Base weapon damage
   let normalDamage: number
   
   // Check if Great Weapon Fighting applies
-  const hasGWF = fightingStyles.some(style => style.type === 'great_weapon_fighting')
+  const hasGWF = fightingStyles.some(style => 
+    style.type === 'great_weapon_fighting' || style.rerollLowDamage)
   
-  if (hasGWF && weaponType === 'two_handed') {
-    normalDamage = applyGreatWeaponFighting(baseDamage.baseDice, baseDamage.bonusDamage)
+  if (hasGWF && (weaponType === 'two_handed' || weaponType === 'versatile_two_handed')) {
+    normalDamage = applyGreatWeaponFighting(weaponDice, baseDamage.bonusDamage)
   } else {
-    normalDamage = calculateDamageExpectation(baseDamage)
+    // Calculate using the appropriate dice
+    const diceResult = parseDiceNotation(weaponDice)
+    normalDamage = diceResult.average + baseDamage.bonusDamage
   }
   
-  // Apply fighting style bonuses
-  normalDamage = applyFightingStyleDamage(normalDamage, fightingStyles, weaponType)
+  // Apply fighting style bonuses (like Dueling +2 damage)
+  for (const style of fightingStyles) {
+    if (style.bonusDamage) {
+      if (style.condition === 'one_handed_weapon' && weaponType === 'one_handed') {
+        normalDamage += style.bonusDamage
+      } else if (style.condition === 'ranged_weapon' && weaponType === 'ranged') {
+        normalDamage += style.bonusDamage
+      } else if (!style.condition) {
+        normalDamage += style.bonusDamage
+      }
+    }
+  }
   
   // Add buff damage
   for (const buff of buffs) {
     normalDamage += calculateDamageExpectation(buff.damage)
   }
   
-  // Calculate crit damage
-  let critDamage = calculateCriticalDamage(baseDamage, critBonus)
+  // Calculate crit damage (weapon dice + crit bonus dice, static bonuses once)
+  let critDamage: number
   
-  // Apply fighting style bonuses to crit (non-dice bonuses)
-  const nonDiceBonuses = normalDamage - calculateDamageExpectation(baseDamage)
-  critDamage += nonDiceBonuses
+  // Base weapon dice average (use versatile dice if applicable)
+  const { count, sides } = parseDiceNotation(weaponDice)
+  const weaponDiceAverage = count * (sides + 1) / 2
+  critDamage = weaponDiceAverage  // Base weapon dice
+  
+  // Add crit bonus dice (typically equals weapon dice for standard crits)
+  if (critBonus) {
+    critDamage += calculateDamageExpectation(critBonus)
+  }
+  
+  // Add static bonuses once (weapon bonus, fighting styles, buffs)
+  critDamage += baseDamage.bonusDamage
+  
+  // Add fighting style bonuses (non-dice bonuses only)
+  for (const style of fightingStyles) {
+    if (style.bonusDamage) {
+      if (style.condition === 'one_handed_weapon' && weaponType === 'one_handed') {
+        critDamage += style.bonusDamage
+      } else if (style.condition === 'ranged_weapon' && weaponType === 'ranged') {
+        critDamage += style.bonusDamage
+      } else if (!style.condition) {
+        critDamage += style.bonusDamage
+      }
+    }
+  }
+  
+  // Add buff damage (dice doubled on crit, static bonuses once)
+  for (const buff of buffs) {
+    const buffBaseDamage = calculateDamageExpectation(buff.damage)
+    const { count: buffCount, sides: buffSides } = parseDiceNotation(buff.damage.baseDice)
+    const buffDiceAverage = buffCount * (buffSides + 1) / 2
+    const buffStaticBonus = buff.damage.bonusDamage
+    // Double dice, add static bonus once
+    critDamage += (buffDiceAverage * 2) + buffStaticBonus
+  }
   
   // Sneak Attack damage (only on the first qualifying hit)
   if (sneakAttackLevel > 0) {
@@ -230,6 +278,10 @@ export function calculateCompleteDamage(params: DamageCalculationParams): {
     // Sneak Attack dice are also doubled on crit
     critDamage += sneakDamage * 2
   }
+  
+  // Ensure damage doesn't go below 0
+  normalDamage = Math.max(0, normalDamage)
+  critDamage = Math.max(0, critDamage)
   
   return {
     normalDamage,

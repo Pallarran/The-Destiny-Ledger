@@ -54,6 +54,8 @@ export function calculateDPR(input: DPRCalculationInput): DPRResult {
       }
     })
     
+    breakdown.sneakAttackDamage += roundResult.sneakAttackDamage
+    
     if (roundResult.actionSurgeUsed) {
       breakdown.actionSurgeAttacks += roundResult.attacks
         .slice(build.attackSequence.attacks.length)
@@ -78,9 +80,10 @@ function calculateRoundDPR(
   targetAC: number,
   roundNumber: number,
   allowRound0Buffs: boolean
-): RoundResult {
+): RoundResult & { sneakAttackDamage: number } {
   const attackResults: AttackResult[] = []
   let actionSurgeUsed = false
+  let roundSneakAttackDamage = 0
   
   // Determine active buffs for this round
   const activeBuffs = build.buffs.filter(buff => {
@@ -92,7 +95,7 @@ function calculateRoundDPR(
   const attacks = [...build.attackSequence.attacks]
   
   // Extra attacks from class features
-  if (build.attackSequence.extraAttacks) {
+  if (build.attackSequence.extraAttacks && build.attackSequence.attacks.length > 0) {
     for (let i = 0; i < build.attackSequence.extraAttacks; i++) {
       attacks.push(build.attackSequence.attacks[0]) // Copy main attack
     }
@@ -112,6 +115,9 @@ function calculateRoundDPR(
   
   // Process each attack
   attacks.forEach((attack, index) => {
+    // Skip if attack is undefined/null
+    if (!attack) return
+    
     const modifiedAttack = applyBuffsToAttack(attack, activeBuffs, build.fightingStyles)
     const probability = calculateAttackProbability(modifiedAttack.attackRoll, targetAC)
     
@@ -134,6 +140,8 @@ function calculateRoundDPR(
         damage.normalDamage += sneakAttackDamage
         damage.critDamage += sneakAttackDamage * 2 // Sneak Attack dice double on crit
         sneakAttackApplied = true
+        // Track Sneak Attack damage contribution
+        roundSneakAttackDamage = calculateAttackDamage(sneakAttackDamage, sneakAttackDamage * 2, probability)
       }
     }
     
@@ -157,7 +165,8 @@ function calculateRoundDPR(
     round: roundNumber,
     attacks: attackResults,
     totalDPR,
-    actionSurgeUsed
+    actionSurgeUsed,
+    sneakAttackDamage: roundSneakAttackDamage
   }
 }
 
@@ -271,8 +280,15 @@ export function calculateCompleteDPR(
 // Helper functions
 
 function getRogueLevel(build: BuildConfiguration): number {
-  const sneakFeature = build.classFeatures.find(f => f.name === 'sneak_attack')
-  return sneakFeature ? (typeof sneakFeature.value === 'number' ? sneakFeature.value : 0) : 0
+  const sneakFeature = build.classFeatures.find(f => 
+    f.id === 'sneak_attack' || f.name === 'Sneak Attack' || f.name === 'sneak_attack')
+  
+  if (!sneakFeature || typeof sneakFeature.value !== 'number') return 0
+  
+  // The value represents the number of Sneak Attack dice
+  // Convert dice count to rogue level: 1d6 at level 1, +1d6 every 2 levels
+  const diceCount = sneakFeature.value
+  return diceCount * 2 - 1 // 1d6 = level 1, 2d6 = level 3, 3d6 = level 5, etc.
 }
 
 function applyBuffsToAttack(
@@ -325,7 +341,9 @@ function canSneakAttack(attack: Attack, build: BuildConfiguration): boolean {
 
 function hasGWMOrSS(build: BuildConfiguration): boolean {
   return build.classFeatures.some(f => 
-    f.name === 'great_weapon_master' || f.name === 'sharpshooter'
+    f.name === 'great_weapon_master' || f.name === 'Great Weapon Master' ||
+    f.name === 'sharpshooter' || f.name === 'Sharpshooter' ||
+    f.id === 'great_weapon_master' || f.id === 'sharpshooter'
   )
 }
 

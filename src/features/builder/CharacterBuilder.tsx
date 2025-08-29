@@ -1,43 +1,36 @@
-import { useState } from 'react'
-// import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-// import { Button } from '@/components/ui/button'
-// import { Input } from '@/components/ui/input'
-// import { Label } from '@/components/ui/label'
-// import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-// import { AbilityScores, AbilityScoresState } from './components/AbilityScores'
-// import { ClassSelection, ClassSelectionState } from './components/ClassSelection'
-// import { FeatSelection, FeatSelectionState } from './components/FeatSelection'
-// import { DPRChart } from '../dpr/components/DPRChart'
-// import { Save } from 'lucide-react'
-
-// Placeholder interfaces - will be implemented in future phases
+import { Sword, Shield, Zap } from 'lucide-react'
 
 export function CharacterBuilder() {
   return (
-    <div className="container mx-auto py-8 space-y-6">
+    <div className="space-y-6">
       <div className="max-w-4xl mx-auto">
         <div className="text-center space-y-4">
-          <h1 className="text-4xl font-bold text-foreground">
+          <h1 className="text-4xl font-serif font-bold text-arcane-800">
             Character Builder
           </h1>
-          <p className="text-xl text-muted-foreground">
-            Build and optimize your D&D 5e character for maximum effectiveness
+          <p className="text-xl text-parchment-700">
+            Forge legendary heroes with mathematical precision and arcane wisdom
           </p>
           
-          <div className="bg-card border rounded-lg p-8 mt-8">
+          <div className="bg-parchment-50/80 border border-parchment-200 rounded-lg p-8 mt-8 shadow-sm">
             <div className="space-y-6">
               <div className="text-center">
-                <h2 className="text-2xl font-semibold mb-4">🚧 Coming Soon</h2>
-                <p className="text-muted-foreground">
-                  The advanced character builder is currently in development. 
-                  Soon you'll be able to:
+                <div className="flex justify-center items-center mb-6">
+                  <Sword className="h-12 w-12 text-arcane-600 mx-2" />
+                  <Shield className="h-16 w-16 text-arcane-700 mx-2" />
+                  <Zap className="h-12 w-12 text-arcane-600 mx-2" />
+                </div>
+                <h2 className="text-2xl font-serif font-semibold text-arcane-800 mb-4">The Forge Awakens</h2>
+                <p className="text-parchment-700">
+                  The legendary character forge is being inscribed with ancient runes. 
+                  Soon you shall wield these powers:
                 </p>
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
                 <div className="space-y-3">
-                  <h3 className="font-semibold text-primary">⚔️ Character Creation</h3>
-                  <ul className="text-sm text-muted-foreground space-y-2">
+                  <h3 className="font-serif font-semibold text-arcane-700">⚔️ Hero's Genesis</h3>
+                  <ul className="text-sm text-parchment-600 space-y-2">
                     <li>• Generate ability scores with multiple methods</li>
                     <li>• Select from Fighter, Rogue, and Ranger classes</li>
                     <li>• Choose subclasses and progression paths</li>

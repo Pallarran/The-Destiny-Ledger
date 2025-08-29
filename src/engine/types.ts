@@ -10,6 +10,7 @@ export interface DamageRoll {
   baseDice: string // e.g., "1d8", "2d6"
   bonusDamage: number
   damageType: string
+  versatileDice?: string // e.g., "1d10" for versatile weapons when two-handed
 }
 
 export interface Attack {
@@ -33,10 +34,24 @@ export interface AttackSequence {
 }
 
 export interface FightingStyle {
-  type: 'archery' | 'dueling' | 'great_weapon_fighting' | 'defense' | 'protection'
+  id: string
+  name: string
+  type?: 'archery' | 'dueling' | 'great_weapon_fighting' | 'defense' | 'protection'
   bonusToHit?: number
   bonusDamage?: number
   rerollDice?: boolean // For GWF
+  rerollLowDamage?: boolean // Alternative name for GWF
+  condition?: string // Conditions like 'one_handed_weapon', 'ranged_weapon'
+}
+
+// Input interface for damage calculations
+export interface DamageInput {
+  baseDamage: DamageRoll
+  critBonus?: DamageRoll
+  fightingStyles?: FightingStyle[]
+  weaponType?: 'one_handed' | 'two_handed' | 'ranged' | 'versatile_two_handed'
+  sneakAttackLevel?: number
+  buffs?: Array<{ name: string; damage: DamageRoll }>
 }
 
 export interface ClassFeature {

@@ -234,10 +234,10 @@ describe('Probability Calculations', () => {
         critRange: 20
       }
       
-      const targetAC = 10
+      const targetAC = 15
       const prob = calculateAttackProbability(attackRoll, targetAC)
       
-      // Need to roll 15+ on d20, only nat 20 hits
+      // Need to roll 20 on d20, only nat 20 hits
       expect(prob.pHit).toBeCloseTo(0.05, 3)
       expect(prob.pCrit).toBeCloseTo(0.05, 3)
     })

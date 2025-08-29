@@ -376,7 +376,7 @@ describe('Weapon Damage Integration', () => {
 
     const result = calculateCompleteDamage(rapierInput)
     
-    expect(result.normalDamage).toBeCloseTo(18.0, 2) // 1d8+4+3d6 = 4.5+4+10.5
-    expect(result.critDamage).toBeCloseTo(32.5, 2) // 2d8+4+6d6 = 9+4+21
+    expect(result.normalDamage).toBeCloseTo(19.0, 2) // 1d8+4+3d6 = 4.5+4+10.5 = 19.0
+    expect(result.critDamage).toBeCloseTo(34.0, 2) // 2d8+4+6d6 = 9+4+21 = 34.0
   })
 })
