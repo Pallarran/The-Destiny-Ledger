@@ -8,6 +8,7 @@ import { ScrollText, Sword, Star, Package, Save, Download, Share } from 'lucide-
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
 
 const DEFAULT_BUILD: Build = {
   id: '',
@@ -111,30 +112,34 @@ export function CharacterBuilder() {
   ]
 
   return (
-    <div className="space-y-8">
-      {/* Professional Header */}
-      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Character Builder
-          </h1>
-          <p className="text-gray-600">
-            Create and optimize your D&D 5e characters with professional tools
-          </p>
-        </div>
-        
-        <div className="flex items-center gap-3">
-          <Badge variant="secondary" className="bg-green-50 text-green-700 border-green-200">
-            ✓ Auto-saved
-          </Badge>
-          <button className="inline-flex items-center px-3 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
-            <Save className="h-4 w-4 mr-2" />
-            Save
-          </button>
-          <button className="inline-flex items-center px-3 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
-            <Share className="h-4 w-4 mr-2" />
-            Share
-          </button>
+    <div className="min-h-screen bg-background">
+      {/* Modern Professional Header */}
+      <div className="bg-gradient-to-r from-blue-50/50 to-indigo-50/30 border-b border-border">
+        <div className="container mx-auto px-6 py-12">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+            <div>
+              <h1 className="text-4xl font-bold text-foreground mb-3">
+                Character Builder
+              </h1>
+              <p className="text-xl text-muted-foreground">
+                Create and optimize your D&D 5e characters with professional tools
+              </p>
+            </div>
+            
+            <div className="flex items-center gap-3">
+              <Badge variant="success">
+                ✓ Auto-saved
+              </Badge>
+              <Button variant="outline" size="sm">
+                <Save className="h-4 w-4 mr-2" />
+                Save
+              </Button>
+              <Button variant="outline" size="sm">
+                <Share className="h-4 w-4 mr-2" />
+                Share
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
       
