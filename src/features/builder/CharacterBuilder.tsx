@@ -1,14 +1,10 @@
 import { useState } from 'react'
-import { Build, AbilityScores as AbilityScoresType, LevelTimeline, BuildFeat, Gear, BuildBuff, SimConfig } from '../../stores/types'
+import { Build, AbilityScores as AbilityScoresType, BuildFeat, Gear } from '../../stores/types'
 import { AbilityScores } from './components/AbilityScores'
 import { ClassSelection } from './components/ClassSelection'
 import { FeatSelection } from './components/FeatSelection'
 import { GearEditor } from './components/GearEditor'
-import { ScrollText, Sword, Star, Package, Save, Download, Share } from 'lucide-react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
+import { ScrollText, Sword, Star, Package, Save, Share, Dice6, Edit3 } from 'lucide-react'
 
 const DEFAULT_BUILD: Build = {
   id: '',
@@ -104,171 +100,202 @@ export function CharacterBuilder() {
     }))
   }
 
-  const sections = [
-    { id: 'basics' as const, icon: ScrollText, name: 'Ability Scores', component: AbilityScores },
-    { id: 'class' as const, icon: Sword, name: 'Class & Levels', component: ClassSelection },
-    { id: 'feats' as const, icon: Star, name: 'Feats & ASIs', component: FeatSelection },
-    { id: 'gear' as const, icon: Package, name: 'Equipment', component: GearEditor },
-  ]
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Modern Professional Header */}
-      <div className="bg-gradient-to-r from-blue-50/50 to-indigo-50/30 border-b border-border">
-        <div className="container mx-auto px-6 py-12">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-            <div>
-              <h1 className="text-4xl font-bold text-foreground mb-3">
-                Character Builder
+    <div className="min-h-screen bg-bg">
+      {/* Dark Chrome Header from concept image */}
+      <div className="chrome-header">
+        <div className="container mx-auto px-6 py-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 rounded-full bg-accent-arcane/20 flex items-center justify-center border border-accent-arcane/30">
+                <ScrollText className="w-5 h-5 text-accent-arcane" />
+              </div>
+              <h1 className="text-2xl font-serif font-bold text-panel tracking-tight">
+                CHARACTER BUILDER
               </h1>
-              <p className="text-xl text-muted-foreground">
-                Create and optimize your D&D 5e characters with professional tools
-              </p>
             </div>
             
             <div className="flex items-center gap-3">
-              <Badge variant="success">
-                ✓ Auto-saved
-              </Badge>
-              <Button variant="outline" size="sm">
+              <button className="parchment-button text-sm">
                 <Save className="h-4 w-4 mr-2" />
                 Save
-              </Button>
-              <Button variant="outline" size="sm">
+              </button>
+              <button className="parchment-button primary text-sm">
                 <Share className="h-4 w-4 mr-2" />
                 Share
-              </Button>
+              </button>
             </div>
           </div>
         </div>
       </div>
       
-      {/* Character Name Card */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Character Name</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Input
-            type="text"
-            value={build.name}
-            onChange={(e) => setBuild(prev => ({ ...prev, name: e.target.value }))}
-            placeholder="Enter your character's name..."
-            className="text-lg"
-          />
-        </CardContent>
-      </Card>
+      <div className="container mx-auto px-6 py-8 space-y-8">
+        {/* Character Identity Card matching concept */}
+        <div className="panel p-6">
+          <div className="flex items-center gap-4 mb-6">
+            <div className="w-12 h-12 rounded-full bg-accent-arcane/20 flex items-center justify-center border border-accent-arcane/30">
+              <ScrollText className="w-6 h-6 text-accent-arcane" />
+            </div>
+            <div>
+              <h2 className="text-xl font-serif font-bold text-ink">Sir Kaelen</h2>
+              <p className="text-muted-ink">Race & Subrace: Human (Variant Human)</p>
+            </div>
+          </div>
+        </div>
 
-      {/* Professional Tab Navigation */}
-      <Card>
-        <CardContent className="p-4">
+        {/* Parchment Tab Navigation matching concept */}
+        <div className="tab-list">
           <nav className="flex space-x-1" role="tablist">
-            {sections.map(({ id, icon: Icon, name }) => (
+            {[
+              { id: 'identity', name: 'Identity', icon: ScrollText },
+              { id: 'basics', name: 'Ability Scores', icon: Dice6 },
+              { id: 'class', name: 'Class & Levels', icon: Sword },
+              { id: 'feats', name: 'Feats', icon: Star },
+              { id: 'gear', name: 'Gear', icon: Package },
+              { id: 'notes', name: 'Notes', icon: Edit3 }
+            ].map(({ id, icon: Icon, name }) => (
               <button
                 key={id}
-                onClick={() => setActiveSection(id)}
+                onClick={() => setActiveSection(id as 'basics' | 'class' | 'feats' | 'gear')}
                 role="tab"
                 aria-selected={activeSection === id}
-                className={`flex items-center space-x-2 px-4 py-2 rounded-md font-medium transition-all duration-200 ${
-                  activeSection === id
-                    ? 'bg-indigo-100 text-indigo-700'
-                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                }`}
+                className={`tab-button ${activeSection === id ? 'active' : ''}`}
               >
-                <Icon className={`h-4 w-4 ${
-                  activeSection === id ? 'text-indigo-600' : 'text-gray-400'
-                }`} />
+                <Icon className="h-4 w-4" />
                 <span>{name}</span>
               </button>
             ))}
           </nav>
-        </CardContent>
-      </Card>
+        </div>
 
-      {/* Content Area */}
-      <div className="space-y-8">
-        {activeSection === 'basics' && (
-          <AbilityScores
-            abilityScores={build.abilityScores}
-            onChange={handleAbilityScoresChange}
-          />
-        )}
+        {/* Main Content Area with sidebar matching concept */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Main Content */}
+          <div className="lg:col-span-2 space-y-8">
+            {activeSection === 'basics' && (
+              <AbilityScores
+                abilityScores={build.abilityScores}
+                onChange={handleAbilityScoresChange}
+              />
+            )}
 
-        {activeSection === 'class' && (
-          <ClassSelection
-            levelTimeline={build.levelTimeline}
-            onAddLevel={handleAddLevel}
-            onUpdateLevel={handleUpdateLevel}
-            onRemoveLevel={handleRemoveLevel}
-          />
-        )}
+            {activeSection === 'class' && (
+              <ClassSelection
+                levelTimeline={build.levelTimeline}
+                onAddLevel={handleAddLevel}
+                onUpdateLevel={handleUpdateLevel}
+                onRemoveLevel={handleRemoveLevel}
+              />
+            )}
 
-        {activeSection === 'feats' && (
-          <FeatSelection
-            feats={build.feats}
-            levelTimeline={build.levelTimeline}
-            abilityScores={build.abilityScores.scores}
-            onAddFeat={handleAddFeat}
-            onRemoveFeat={handleRemoveFeat}
-            onUpdateLevelEntry={handleUpdateLevelEntry}
-          />
-        )}
+            {activeSection === 'feats' && (
+              <FeatSelection
+                feats={build.feats}
+                levelTimeline={build.levelTimeline}
+                abilityScores={build.abilityScores.scores}
+                onAddFeat={handleAddFeat}
+                onRemoveFeat={handleRemoveFeat}
+                onUpdateLevelEntry={handleUpdateLevelEntry}
+              />
+            )}
 
-        {activeSection === 'gear' && (
-          <GearEditor
-            gear={build.gear}
-            onUpdateGear={handleUpdateGear}
-          />
-        )}
-      </div>
+            {activeSection === 'gear' && (
+              <GearEditor
+                gear={build.gear}
+                onUpdateGear={handleUpdateGear}
+              />
+            )}
+          </div>
 
-      {/* Build Summary */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Build Summary</CardTitle>
-        </CardHeader>
-        <CardContent>
+          {/* Level Timeline Sidebar matching concept */}
+          <div className="level-timeline p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-lg font-serif font-bold text-ink">Level Timeline</h3>
+              <button className="text-ink hover:text-accent-arcane">×</button>
+            </div>
+            
+            {/* Level progression matching concept image */}
+            <div className="space-y-4">
+              {[
+                { level: 1, class: '', icon: '1' },
+                { level: 2, class: '', icon: '1' },
+                { level: 4, class: 'Fighter', icon: '6' },
+                { level: 5, class: '', icon: '7' },
+                { level: 7, class: 'Art', icon: '8' },
+                { level: 7, class: 'Rogue', icon: '10' },
+                { level: 6, class: 'ASI / Feat', icon: '11' },
+                { level: 11, class: 'Feat', icon: '11' },
+                { level: 15, class: 'Rogue', icon: '11' },
+                { level: 12, class: 'Buffs', icon: '13' },
+                { level: 20, class: 'LJulis', icon: '20' }
+              ].map((item, index) => (
+                <div key={index} className="flex items-center gap-3">
+                  <div className="level-marker">
+                    {item.icon}
+                  </div>
+                  <div className="flex-1">
+                    <div className="text-sm font-medium text-ink">{item.level}</div>
+                    <div className="text-xs text-muted-ink">{item.class}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Build Summary */}
+        <div className="parchment-card p-6">
+          <h3 className="text-lg font-semibold text-foreground mb-6 flex items-center gap-2">
+            <div className="w-6 h-6 rounded bg-primary/20 flex items-center justify-center">
+              <span className="text-xs text-primary font-bold">Σ</span>
+            </div>
+            Build Summary
+          </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="bg-indigo-50 p-4 rounded-lg border border-indigo-200">
-              <div className="flex items-center justify-between">
+            <div className="bg-primary/10 p-4 rounded-lg border border-primary/30 relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent" />
+              <div className="relative flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-indigo-700">Character Level</p>
-                  <p className="text-2xl font-bold text-indigo-900">{build.levelTimeline.length}</p>
+                  <p className="text-sm font-medium text-primary">Character Level</p>
+                  <p className="text-2xl font-bold text-foreground">{build.levelTimeline.length}</p>
                 </div>
-                <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
-                  <span className="text-indigo-600 font-bold">{build.levelTimeline.length}</span>
+                <div className="w-10 h-10 bg-primary/20 rounded-lg flex items-center justify-center arcane-border">
+                  <span className="text-primary font-bold">{build.levelTimeline.length}</span>
                 </div>
               </div>
             </div>
             
-            <div className="bg-emerald-50 p-4 rounded-lg border border-emerald-200">
-              <div className="flex items-center justify-between">
+            <div className="bg-emerald-500/10 p-4 rounded-lg border border-emerald-500/30 relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 via-transparent to-transparent" />
+              <div className="relative flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-emerald-700">Feats Selected</p>
-                  <p className="text-2xl font-bold text-emerald-900">{build.feats.length}</p>
+                  <p className="text-sm font-medium text-emerald-400">Feats Selected</p>
+                  <p className="text-2xl font-bold text-foreground">{build.feats.length}</p>
                 </div>
-                <div className="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center">
-                  <Star className="h-5 w-5 text-emerald-600" />
+                <div className="w-10 h-10 bg-emerald-500/20 rounded-lg flex items-center justify-center border border-emerald-500/30">
+                  <Star className="h-5 w-5 text-emerald-400" />
                 </div>
               </div>
             </div>
             
-            <div className="bg-amber-50 p-4 rounded-lg border border-amber-200">
-              <div className="flex items-center justify-between">
+            <div className="bg-amber-500/10 p-4 rounded-lg border border-amber-500/30 relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 via-transparent to-transparent" />
+              <div className="relative flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-amber-700">Weapons Equipped</p>
-                  <p className="text-2xl font-bold text-amber-900">
+                  <p className="text-sm font-medium text-amber-400">Weapons Equipped</p>
+                  <p className="text-2xl font-bold text-foreground">
                     {[build.gear.mainHand, build.gear.offHand, build.gear.ranged].filter(Boolean).length}
                   </p>
                 </div>
-                <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center">
-                  <Package className="h-5 w-5 text-amber-600" />
+                <div className="w-10 h-10 bg-amber-500/20 rounded-lg flex items-center justify-center border border-amber-500/30">
+                  <Package className="h-5 w-5 text-amber-400" />
                 </div>
               </div>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   )
 }

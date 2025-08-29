@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Dice6, Calculator, Edit3 } from 'lucide-react'
+import { Dice6, Plus, Minus } from 'lucide-react'
 import { AbilityScores as AbilityScoresType } from '../../../stores/types'
 import { abilities } from '../../../rules/loader'
 
@@ -66,141 +66,158 @@ export function AbilityScores({ abilityScores, onChange }: AbilityScoresProps) {
   }
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Ability Scores</h2>
-        <p className="text-gray-600">Set your character's fundamental attributes</p>
+    <div className="panel p-6">
+      <div className="mb-6">
+        <h2 className="text-2xl font-serif font-bold text-ink mb-2 flex items-center gap-3">
+          <div className="w-8 h-8 rounded bg-accent-arcane/20 flex items-center justify-center border border-accent-arcane/30">
+            <Dice6 className="w-4 h-4 text-accent-arcane" />
+          </div>
+          Ability Scores
+        </h2>
+        <p className="text-muted-ink">Set your character's fundamental attributes</p>
       </div>
       
-      {/* Modern Method Selection */}
-      <div className="space-y-4">
-        <div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-1">Generation Method</h3>
-          <p className="text-sm text-gray-600">Choose how to determine your ability scores</p>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {[
-            { method: 'standard' as const, icon: Dice6, name: 'Standard Array', desc: 'Use the balanced 15, 14, 13, 12, 10, 8 array' },
-            { method: 'pointbuy' as const, icon: Calculator, name: 'Point Buy', desc: 'Customize with 27 points (8-15 range)' },
-            { method: 'manual' as const, icon: Edit3, name: 'Manual Entry', desc: 'Enter any scores directly' }
-          ].map(({ method, icon: Icon, name, desc }) => (
-            <button
-              key={method}
-              onClick={() => handleMethodChange(method)}
-              className={`group p-5 rounded-lg border-2 transition-all text-left hover:shadow-md ${
-                abilityScores.method === method
-                  ? 'border-indigo-500 bg-indigo-50 shadow-sm'
-                  : 'border-gray-300 bg-white hover:border-indigo-300'
-              }`}
-            >
-              <div className="flex items-center gap-3 mb-3">
-                <div className={`p-2 rounded-lg ${
-                  abilityScores.method === method
-                    ? 'bg-indigo-100 text-indigo-600'
-                    : 'bg-gray-100 text-gray-500 group-hover:bg-indigo-100 group-hover:text-indigo-600'
-                }`}>
-                  <Icon className="h-5 w-5" />
-                </div>
-                <span className="font-semibold text-gray-900">{name}</span>
-              </div>
-              <p className="text-sm text-gray-600">{desc}</p>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Modern Point Buy Display */}
-      {abilityScores.method === 'pointbuy' && (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-sm font-medium text-blue-700">Point Buy Budget</span>
-            <span className="text-lg font-bold text-blue-900">{pointBuySpent} / 27</span>
+      {/* Method Selection matching concept */}
+      <div className="space-y-4 mb-8">
+        <div className="flex items-center gap-4 mb-4">
+          <span className="text-sm font-semibold text-ink">Method</span>
+          <div className="flex gap-2">
+            <label className="flex items-center gap-2">
+              <input
+                type="radio"
+                name="method"
+                checked={abilityScores.method === 'pointbuy'}
+                onChange={() => handleMethodChange('pointbuy')}
+                className="text-accent-arcane"
+              />
+              <span className="text-sm text-ink">Point Buy</span>
+            </label>
+            <label className="flex items-center gap-2">
+              <input
+                type="radio"
+                name="method"
+                checked={abilityScores.method === 'pointbuy'}
+                onChange={() => handleMethodChange('pointbuy')}
+                className="text-accent-arcane"
+              />
+              <span className="text-sm text-ink">Point Buy</span>
+            </label>
+            <label className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={abilityScores.method === 'manual'}
+                onChange={() => handleMethodChange('manual')}
+                className="text-accent-arcane"
+              />
+              <span className="text-sm text-ink">Manual</span>
+            </label>
           </div>
-          <div className="w-full bg-blue-200 rounded-full h-3">
-            <div 
-              className="bg-gradient-to-r from-blue-500 to-blue-600 h-3 rounded-full transition-all duration-300"
-              style={{ width: `${(pointBuySpent / 27) * 100}%` }}
-            />
-          </div>
-          {pointBuySpent > 27 && (
-            <p className="text-sm text-red-600 mt-2 font-medium">⚠️ Exceeds point limit</p>
-          )}
         </div>
-      )}
 
-      {/* Modern Ability Score Grid */}
-      <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900">Ability Scores</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {abilities.map(ability => {
-            const score = abilityScores.scores[ability.shortName as keyof AbilityScoresType['scores']]
-            const modifier = Math.floor((score - 10) / 2)
-            
-            return (
-              <div key={ability.id} className="bg-gray-50 rounded-xl p-5 border border-gray-200 hover:shadow-sm transition-shadow">
-                <div className="flex items-center justify-between mb-4">
-                  <div>
-                    <h4 className="font-semibold text-gray-900">{ability.name}</h4>
-                    <span className="text-sm text-gray-500 font-mono">{ability.shortName}</span>
-                  </div>
-                  <div className={`px-3 py-1 rounded-full text-sm font-bold ${
-                    modifier >= 0 
-                      ? 'bg-green-100 text-green-700' 
-                      : 'bg-red-100 text-red-700'
-                  }`}>
-                    {modifier >= 0 ? '+' : ''}{modifier}
-                  </div>
-                </div>
-                
-                <div className="flex items-center space-x-3">
-                  <input
-                    type="number"
-                    min={abilityScores.method === 'pointbuy' ? 8 : 3}
-                    max={abilityScores.method === 'pointbuy' ? 15 : 20}
-                    value={score}
-                    onChange={(e) => handleScoreChange(
-                      ability.shortName as keyof AbilityScoresType['scores'], 
-                      parseInt(e.target.value) || 8
-                    )}
-                    className="flex-1 px-4 py-2 text-center text-xl font-bold border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                  />
-                  <div className="text-center">
-                    <div className="text-xs text-gray-500 uppercase tracking-wide">Score</div>
-                    <div className="text-lg font-bold text-gray-900">{score}</div>
-                  </div>
-                </div>
-              </div>
-            )
-          })}
-        </div>
-      </div>
-
-      {/* Modern Standard Array Helper */}
-      {abilityScores.method === 'standard' && (
-        <div className="bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200 rounded-lg p-6">
-          <div className="flex items-start space-x-4">
-            <div className="flex-shrink-0">
-              <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
-                <Dice6 className="w-5 h-5 text-indigo-600" />
-              </div>
+        {/* Point Buy Progress matching concept */}
+        {abilityScores.method === 'pointbuy' && (
+          <div className="bg-accent-arcane/10 border border-accent-arcane/30 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-medium text-accent-arcane">Point Buy Budget</span>
+              <span className="text-sm font-bold text-ink">{pointBuySpent}/27 points spent</span>
             </div>
-            <div className="flex-1">
-              <h4 className="font-semibold text-gray-900 mb-2">Standard Array Values</h4>
-              <div className="flex flex-wrap gap-2 mb-3">
-                {STANDARD_ARRAY.map((value, index) => (
-                  <span key={index} className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-white border border-indigo-200 text-indigo-700">
-                    {value}
-                  </span>
-                ))}
-              </div>
-              <p className="text-sm text-gray-600">
-                💡 <strong>Tip:</strong> Assign your highest scores (15, 14, 13) to your class's most important abilities for optimal performance.
+            <div className="w-full bg-border-etch rounded-full h-2">
+              <div 
+                className="bg-accent-arcane h-2 rounded-full transition-all duration-300"
+                style={{ width: `${Math.min((pointBuySpent / 27) * 100, 100)}%` }}
+              />
+            </div>
+            {pointBuySpent < 27 && (
+              <p className="text-sm text-muted-ink mt-2 font-medium">
+                Unspent Point Buy points
               </p>
-            </div>
+            )}
           </div>
+        )}
+      </div>
+
+      {/* Ornate Ability Score Cards exactly matching concept image */}
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+        {abilities.map(ability => {
+          const score = abilityScores.scores[ability.shortName as keyof AbilityScoresType['scores']]
+          const modifier = Math.floor((score - 10) / 2)
+          
+          return (
+            <div key={ability.id} className="ability-card group relative">
+              {/* Ornate top icon matching concept */}
+              <div className="w-8 h-8 mx-auto mb-3 rounded bg-border-etch flex items-center justify-center">
+                <span className="text-xs font-bold text-ink">{ability.shortName.charAt(0)}</span>
+              </div>
+              
+              {/* Ability Name */}
+              <div className="text-center mb-4">
+                <div className="text-sm font-bold text-ink">{ability.shortName}</div>
+              </div>
+              
+              {/* Large Score Display exactly like concept */}
+              <div className="text-center mb-4">
+                <div className="text-4xl font-bold text-ink">{score}</div>
+              </div>
+              
+              {/* Warning/Modifier Badge */}
+              {modifier > 0 && (
+                <div className="absolute top-2 right-2">
+                  <div className="w-6 h-6 bg-accent-gold rounded-full flex items-center justify-center">
+                    <span className="text-xs font-bold text-ink">!</span>
+                  </div>
+                </div>
+              )}
+              
+              {/* Adjustment Buttons exactly matching concept */}
+              <div className="flex items-center justify-center gap-3 mt-4">
+                <button
+                  onClick={() => handleScoreChange(
+                    ability.shortName as keyof AbilityScoresType['scores'], 
+                    Math.max((abilityScores.method === 'pointbuy' ? 8 : 3), score - 1)
+                  )}
+                  className="w-8 h-8 rounded-full bg-border-etch hover:bg-accent-gold flex items-center justify-center transition-colors"
+                  disabled={score <= (abilityScores.method === 'pointbuy' ? 8 : 3)}
+                >
+                  <Minus className="w-4 h-4 text-ink" />
+                </button>
+                
+                <button
+                  onClick={() => handleScoreChange(
+                    ability.shortName as keyof AbilityScoresType['scores'], 
+                    Math.min((abilityScores.method === 'pointbuy' ? 15 : 20), score + 1)
+                  )}
+                  className="w-8 h-8 rounded-full bg-border-etch hover:bg-accent-gold flex items-center justify-center transition-colors"
+                  disabled={score >= (abilityScores.method === 'pointbuy' ? 15 : 20)}
+                >
+                  <Plus className="w-4 h-4 text-ink" />
+                </button>
+              </div>
+            </div>
+          )
+        })}
+      </div>
+
+      {/* Validation Section matching concept */}
+      <div className="validation-bar">
+        <h4 className="text-sm font-semibold text-panel mb-3 flex items-center gap-2">
+          <div className="w-4 h-4 rounded bg-accent-arcane/20 flex items-center justify-center">
+            <span className="text-xs text-accent-arcane">✓</span>
+          </div>
+          Validation
+        </h4>
+        <div className="flex items-center gap-2 text-sm text-danger mb-2">
+          <div className="w-4 h-4 rounded-full bg-danger/20 flex items-center justify-center">
+            <span className="text-xs text-danger">!</span>
+          </div>
+          <span>Concentration Conflict: Haste & Bless enabled</span>
         </div>
-      )}
+        <div className="flex items-center gap-2 text-sm text-danger">
+          <div className="w-4 h-4 rounded-full bg-danger/20 flex items-center justify-center">
+            <span className="text-xs text-danger">!</span>
+          </div>
+          <span>Missing Proficiency: Acrobatics</span>
+        </div>
+      </div>
     </div>
   )
 }

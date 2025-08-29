@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,72 +6,93 @@
 
 @layer base {
   :root {
-    /* Modern professional color system */
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
-    --primary: 240 5.9% 10%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 45.9%;
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 240 5% 64.9%;
-    --radius: 0.75rem;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
+    /* Design tokens from Product Spec v1.1 - "Modern app on parchment" */
+    --bg: #0F1318;                  /* Dark chrome background & header */
+    --panel: #EDE2CB;               /* Parchment cards/panels */
+    --ink: #1E232A;                 /* Primary text */
+    --muted-ink: #4F5A66;           /* Muted text */
+    --accent-arcane: #63CBFF;       /* Arcane blue - glows, chart lines */
+    --accent-gold: #C8A86B;         /* Gold - dividers, highlights */
+    --accent-emerald: #89B57D;      /* Success/OK */
+    --border-etch: #D8C9A5;         /* Panel borders - etched */
+    --danger: #BE4B49;              /* Danger/error */
+    --radius: 16px;                 /* Border radius */
+    --shadow: 0 1px 0 rgba(0,0,0,.10), inset 0 0 0 1px var(--border-etch);
+    
+    /* shadcn/ui compatibility mappings */
+    --background: 15 13% 9%;        /* --bg as HSL */
+    --foreground: 40 40% 94%;       /* --panel as foreground */
+    --card: 40 40% 88%;             /* --panel */
+    --card-foreground: 211 16% 16%; /* --ink */
+    --popover: 15 13% 9%;           /* --bg */
+    --popover-foreground: 40 40% 94%;
+    --primary: 196 100% 70%;        /* --accent-arcane */
+    --primary-foreground: 15 13% 9%;
+    --secondary: 204 23% 35%;       /* --muted-ink */
+    --secondary-foreground: 40 40% 94%;
+    --muted: 40 19% 85%;            /* Lighter parchment */
+    --muted-foreground: 204 23% 35%;
+    --accent: 196 100% 70%;         /* --accent-arcane */
+    --accent-foreground: 15 13% 9%;
+    --destructive: 2 66% 52%;       /* --danger */
+    --destructive-foreground: 40 40% 94%;
+    --border: 40 28% 82%;           /* --border-etch */
+    --input: 40 19% 85%;            /* Muted parchment */
+    --ring: 196 100% 70%;           /* --accent-arcane */
+    
+    /* Chart colors */
+    --chart-1: 196 100% 70%;        /* Accent blue */
+    --chart-2: 280 70% 65%;         /* Purple */
+    --chart-3: 40 48% 60%;          /* Gold */
+    --chart-4: 89 30% 60%;          /* Emerald */
+    --chart-5: 15 80% 60%;          /* Warm orange */
   }
 
   .dark {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 240 10% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 240 5.9% 10%;
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 240 4.9% 83.9%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
+    /* Same colors - single theme design */
+    --background: 15 13% 9%;
+    --foreground: 40 40% 94%;
+    --card: 40 40% 88%;
+    --card-foreground: 211 16% 16%;
+    --popover: 15 13% 9%;
+    --popover-foreground: 40 40% 94%;
+    --primary: 196 100% 70%;
+    --primary-foreground: 15 13% 9%;
+    --secondary: 204 23% 35%;
+    --secondary-foreground: 40 40% 94%;
+    --muted: 40 19% 85%;
+    --muted-foreground: 204 23% 35%;
+    --accent-hsl: 196 100% 70%;
+    --accent-foreground: 15 13% 9%;
+    --destructive: 2 66% 52%;
+    --destructive-foreground: 40 40% 94%;
+    --border-hsl: 40 28% 82%;
+    --input: 40 19% 85%;
+    --ring: 196 100% 70%;
   }
 
   * {
-    border-color: hsl(var(--border));
+    border-color: var(--border-etch);
   }
 
   body {
-    background-color: hsl(var(--background));
-    color: hsl(var(--foreground));
+    background-color: var(--bg);
+    color: var(--ink);
     font-family: 'Inter', system-ui, sans-serif;
     font-feature-settings: 'rlig' 1, 'calt' 1;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Typography */
+  h1, h2, h3, .heading {
+    font-family: 'Cinzel', serif;
+    letter-spacing: -0.02em;
+  }
+  
+  .fantasy-heading {
+    font-family: 'Cormorant Garamond', serif;
+    letter-spacing: -0.01em;
   }
 
   /* Professional scrollbar */
@@ -94,45 +115,165 @@
 }
 
 @layer components {
-  /* Modern utility classes */
-  .glass {
-    background-color: rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+  /* Parchment style components from Product Spec v1.1 */
+  .panel {
+    background: var(--panel);
+    color: var(--ink);
+    box-shadow: var(--shadow);
+    border-radius: var(--radius);
+    /* Paper noise texture */
+    background-image: 
+      radial-gradient(circle at 25% 25%, rgba(0, 0, 0, 0.02) 0%, transparent 50%),
+      radial-gradient(circle at 75% 75%, rgba(255, 255, 255, 0.03) 0%, transparent 50%);
   }
   
-  .gradient-primary {
-    background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
+  .chrome-header {
+    background: var(--bg);
+    color: var(--panel);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   }
   
-  .gradient-card {
-    background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+  .glow {
+    filter: drop-shadow(0 0 8px rgba(99, 203, 255, 0.45));
   }
   
-  .shadow-luxury {
-    box-shadow: 
-      0 25px 50px -12px rgba(0, 0, 0, 0.08), 
-      0 0 0 1px rgba(255, 255, 255, 0.05),
-      0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  .etched-border {
+    border: 1px solid var(--border-etch);
   }
   
-  .shadow-premium {
-    box-shadow: 
-      0 20px 25px -5px rgba(0, 0, 0, 0.04), 
-      0 10px 10px -5px rgba(0, 0, 0, 0.04),
-      0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  /* Ability score cards matching concept image */
+  .ability-card {
+    background: var(--panel);
+    border: 1px solid var(--border-etch);
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    position: relative;
+    padding: 1rem;
+    text-align: center;
+    /* Ornate corners - simulated with gradients */
+    background-image: 
+      /* Corner ornaments */
+      radial-gradient(circle at 0% 0%, var(--border-etch) 0%, transparent 30%),
+      radial-gradient(circle at 100% 0%, var(--border-etch) 0%, transparent 30%),
+      radial-gradient(circle at 0% 100%, var(--border-etch) 0%, transparent 30%),
+      radial-gradient(circle at 100% 100%, var(--border-etch) 0%, transparent 30%),
+      /* Paper texture */
+      radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.02) 0%, transparent 70%);
+    background-size: 8px 8px, 8px 8px, 8px 8px, 8px 8px, 100% 100%;
+    background-repeat: no-repeat, no-repeat, no-repeat, no-repeat, no-repeat;
+    background-position: top left, top right, bottom left, bottom right, center;
   }
-
-  .btn-modern {
-    @apply inline-flex items-center justify-center rounded-xl px-6 py-3 text-sm font-semibold transition-all duration-200;
-    @apply focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2;
+  
+  /* Level timeline styles */
+  .level-timeline {
+    background: var(--panel);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    position: relative;
   }
-
-  .btn-primary {
-    @apply btn-modern bg-primary text-primary-foreground shadow-sm hover:bg-primary/90 hover:shadow-md hover:scale-105;
+  
+  .level-connection {
+    stroke: var(--accent-arcane);
+    stroke-width: 2;
+    fill: none;
   }
-
-  .btn-secondary {
-    @apply btn-modern bg-secondary text-secondary-foreground border border-border hover:bg-accent hover:text-accent-foreground;
+  
+  .level-marker {
+    background: var(--accent-arcane);
+    border: 2px solid var(--panel);
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--bg);
+    font-size: 12px;
+    font-weight: 600;
+  }
+  
+  /* Validation bar */
+  .validation-bar {
+    background: var(--bg);
+    color: var(--panel);
+    padding: 0.75rem;
+    border-radius: var(--radius);
+    font-weight: 500;
+  }
+  
+  .validation-error {
+    background: var(--danger);
+    color: white;
+  }
+  
+  .validation-warning {
+    background: var(--accent-gold);
+    color: var(--ink);
+  }
+  
+  /* Tab system */
+  .tab-list {
+    background: var(--panel);
+    border-radius: var(--radius);
+    padding: 0.25rem;
+    box-shadow: var(--shadow);
+  }
+  
+  .tab-button {
+    border-radius: calc(var(--radius) - 2px);
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    transition: all 120ms ease-out;
+    color: var(--muted-ink);
+  }
+  
+  .tab-button.active {
+    background: white;
+    color: var(--ink);
+    transform: translateY(-2px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-bottom: 2px solid var(--accent-gold);
+  }
+  
+  /* Form controls */
+  .parchment-input {
+    background: var(--panel);
+    border: 1px solid var(--border-etch);
+    border-radius: calc(var(--radius) / 2);
+    padding: 0.75rem 1rem;
+    color: var(--ink);
+    transition: border-color 120ms ease-out;
+  }
+  
+  .parchment-input:focus {
+    outline: none;
+    border-color: var(--accent-arcane);
+    box-shadow: 0 0 0 3px rgba(99, 203, 255, 0.1);
+  }
+  
+  .parchment-button {
+    background: var(--panel);
+    border: 1px solid var(--border-etch);
+    border-radius: calc(var(--radius) / 2);
+    padding: 0.75rem 1.5rem;
+    color: var(--ink);
+    font-weight: 500;
+    transition: all 120ms ease-out;
+    box-shadow: var(--shadow);
+  }
+  
+  .parchment-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+  
+  .parchment-button.primary {
+    background: var(--accent-arcane);
+    border-color: var(--accent-arcane);
+    color: var(--bg);
+  }
+  
+  .parchment-button.primary:hover {
+    filter: brightness(1.1);
   }
 }
