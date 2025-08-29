@@ -108,105 +108,146 @@ export function CharacterBuilder() {
   ]
 
   return (
-    <div className="space-y-6">
-      <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <div className="text-center space-y-4 mb-8">
-          <h1 className="text-4xl font-serif font-bold text-arcane-800">
-            Character Builder
-          </h1>
-          <p className="text-xl text-parchment-700">
-            Forge legendary heroes with mathematical precision
-          </p>
-        </div>
-
-        {/* Character Name */}
-        <div className="card-fantasy p-4 mb-6">
-          <label className="block text-sm font-serif font-medium text-parchment-700 mb-2">
-            Character Name
-          </label>
-          <input
-            type="text"
-            value={build.name}
-            onChange={(e) => setBuild(prev => ({ ...prev, name: e.target.value }))}
-            className="w-full px-4 py-2 border border-parchment-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-arcane-500 font-serif text-lg"
-            placeholder="Enter character name..."
-          />
-        </div>
-
-        {/* Section Navigation */}
-        <div className="card-fantasy p-4 mb-6">
-          <div className="flex flex-wrap gap-2">
-            {sections.map(({ id, icon: Icon, name }) => (
-              <button
-                key={id}
-                onClick={() => setActiveSection(id)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-all ${
-                  activeSection === id
-                    ? 'border-arcane-500 bg-arcane-50 text-arcane-800'
-                    : 'border-parchment-300 bg-parchment-50 hover:border-arcane-300 hover:bg-arcane-50'
-                }`}
-              >
-                <Icon className="h-4 w-4" />
-                <span className="font-serif font-medium">{name}</span>
-              </button>
-            ))}
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50/30">
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        {/* Modern Header */}
+        <div className="mb-12">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h1 className="text-4xl font-bold text-gray-900 mb-2">
+                Character Builder
+              </h1>
+              <p className="text-lg text-gray-600">
+                Create optimized D&D 5e builds with precision
+              </p>
+            </div>
+            <div className="hidden md:flex items-center space-x-3">
+              <div className="flex items-center space-x-2 text-sm text-gray-500">
+                <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                <span>Auto-saved</span>
+              </div>
+            </div>
+          </div>
+          
+          {/* Character Name - Modern Input */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+            <label className="block text-sm font-medium text-gray-700 mb-3">
+              Character Name
+            </label>
+            <input
+              type="text"
+              value={build.name}
+              onChange={(e) => setBuild(prev => ({ ...prev, name: e.target.value }))}
+              className="w-full px-4 py-3 text-lg border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+              placeholder="Enter your character's name..."
+            />
           </div>
         </div>
 
-        {/* Active Section */}
-        <div className="space-y-6">
-          {activeSection === 'basics' && (
-            <AbilityScores
-              abilityScores={build.abilityScores}
-              onChange={handleAbilityScoresChange}
-            />
-          )}
-
-          {activeSection === 'class' && (
-            <ClassSelection
-              levelTimeline={build.levelTimeline}
-              onAddLevel={handleAddLevel}
-              onUpdateLevel={handleUpdateLevel}
-              onRemoveLevel={handleRemoveLevel}
-            />
-          )}
-
-          {activeSection === 'feats' && (
-            <FeatSelection
-              feats={build.feats}
-              levelTimeline={build.levelTimeline}
-              abilityScores={build.abilityScores.scores}
-              onAddFeat={handleAddFeat}
-              onRemoveFeat={handleRemoveFeat}
-              onUpdateLevelEntry={handleUpdateLevelEntry}
-            />
-          )}
-
-          {activeSection === 'gear' && (
-            <GearEditor
-              gear={build.gear}
-              onUpdateGear={handleUpdateGear}
-            />
-          )}
+        {/* Modern Tab Navigation */}
+        <div className="mb-8">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-2">
+            <nav className="flex space-x-1" role="tablist">
+              {sections.map(({ id, icon: Icon, name }) => (
+                <button
+                  key={id}
+                  onClick={() => setActiveSection(id)}
+                  role="tab"
+                  aria-selected={activeSection === id}
+                  className={`flex items-center space-x-2 px-6 py-3 rounded-lg font-medium transition-all duration-200 ${
+                    activeSection === id
+                      ? 'bg-indigo-100 text-indigo-700 shadow-sm'
+                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                  }`}
+                >
+                  <Icon className={`h-4 w-4 ${
+                    activeSection === id ? 'text-indigo-600' : 'text-gray-400'
+                  }`} />
+                  <span>{name}</span>
+                </button>
+              ))}
+            </nav>
+          </div>
         </div>
 
-        {/* Build Summary */}
-        <div className="card-fantasy p-6 mt-8">
-          <h3 className="text-lg font-serif font-bold text-arcane-800 mb-4">Build Summary</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-            <div className="bg-parchment-50 p-3 rounded border">
-              <div className="font-serif font-medium text-parchment-700">Level</div>
-              <div className="text-xl font-bold text-arcane-800">{build.levelTimeline.length}</div>
+        {/* Modern Content Area */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 min-h-[600px]">
+          <div className="p-8">
+            {activeSection === 'basics' && (
+              <AbilityScores
+                abilityScores={build.abilityScores}
+                onChange={handleAbilityScoresChange}
+              />
+            )}
+
+            {activeSection === 'class' && (
+              <ClassSelection
+                levelTimeline={build.levelTimeline}
+                onAddLevel={handleAddLevel}
+                onUpdateLevel={handleUpdateLevel}
+                onRemoveLevel={handleRemoveLevel}
+              />
+            )}
+
+            {activeSection === 'feats' && (
+              <FeatSelection
+                feats={build.feats}
+                levelTimeline={build.levelTimeline}
+                abilityScores={build.abilityScores.scores}
+                onAddFeat={handleAddFeat}
+                onRemoveFeat={handleRemoveFeat}
+                onUpdateLevelEntry={handleUpdateLevelEntry}
+              />
+            )}
+
+            {activeSection === 'gear' && (
+              <GearEditor
+                gear={build.gear}
+                onUpdateGear={handleUpdateGear}
+              />
+            )}
+          </div>
+        </div>
+
+        {/* Modern Build Summary */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mt-12">
+          <h3 className="text-xl font-semibold text-gray-900 mb-6">Build Overview</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-gradient-to-r from-indigo-50 to-indigo-100 p-4 rounded-lg border border-indigo-200">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-indigo-700 mb-1">Character Level</p>
+                  <p className="text-2xl font-bold text-indigo-900">{build.levelTimeline.length}</p>
+                </div>
+                <div className="w-12 h-12 bg-indigo-200 rounded-lg flex items-center justify-center">
+                  <span className="text-indigo-600 text-lg font-bold">{build.levelTimeline.length}</span>
+                </div>
+              </div>
             </div>
-            <div className="bg-parchment-50 p-3 rounded border">
-              <div className="font-serif font-medium text-parchment-700">Feats</div>
-              <div className="text-xl font-bold text-arcane-800">{build.feats.length}</div>
+            
+            <div className="bg-gradient-to-r from-emerald-50 to-emerald-100 p-4 rounded-lg border border-emerald-200">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-emerald-700 mb-1">Feats Selected</p>
+                  <p className="text-2xl font-bold text-emerald-900">{build.feats.length}</p>
+                </div>
+                <div className="w-12 h-12 bg-emerald-200 rounded-lg flex items-center justify-center">
+                  <Star className="h-6 w-6 text-emerald-600" />
+                </div>
+              </div>
             </div>
-            <div className="bg-parchment-50 p-3 rounded border">
-              <div className="font-serif font-medium text-parchment-700">Weapons</div>
-              <div className="text-xl font-bold text-arcane-800">
-                {[build.gear.mainHand, build.gear.offHand, build.gear.ranged].filter(Boolean).length}
+            
+            <div className="bg-gradient-to-r from-amber-50 to-amber-100 p-4 rounded-lg border border-amber-200">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-amber-700 mb-1">Weapons Equipped</p>
+                  <p className="text-2xl font-bold text-amber-900">
+                    {[build.gear.mainHand, build.gear.offHand, build.gear.ranged].filter(Boolean).length}
+                  </p>
+                </div>
+                <div className="w-12 h-12 bg-amber-200 rounded-lg flex items-center justify-center">
+                  <Sword className="h-6 w-6 text-amber-600" />
+                </div>
               </div>
             </div>
           </div>

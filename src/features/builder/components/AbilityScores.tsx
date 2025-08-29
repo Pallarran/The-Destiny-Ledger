@@ -66,102 +66,138 @@ export function AbilityScores({ abilityScores, onChange }: AbilityScoresProps) {
   }
 
   return (
-    <div className="card-fantasy p-6">
-      <h3 className="text-xl font-serif font-bold text-arcane-800 mb-4">Ability Scores</h3>
+    <div className="space-y-8">
+      <div>
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">Ability Scores</h2>
+        <p className="text-gray-600">Set your character's fundamental attributes</p>
+      </div>
       
-      {/* Method Selection */}
-      <div className="mb-6">
-        <label className="block text-sm font-serif font-medium text-parchment-700 mb-3">
-          Generation Method
-        </label>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+      {/* Modern Method Selection */}
+      <div className="space-y-4">
+        <div>
+          <h3 className="text-lg font-semibold text-gray-900 mb-1">Generation Method</h3>
+          <p className="text-sm text-gray-600">Choose how to determine your ability scores</p>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {[
-            { method: 'standard' as const, icon: Dice6, name: 'Standard Array', desc: 'Use the standard 15, 14, 13, 12, 10, 8 array' },
-            { method: 'pointbuy' as const, icon: Calculator, name: 'Point Buy', desc: '27 points to distribute (8-15 range)' },
-            { method: 'manual' as const, icon: Edit3, name: 'Manual Entry', desc: 'Enter scores directly' }
+            { method: 'standard' as const, icon: Dice6, name: 'Standard Array', desc: 'Use the balanced 15, 14, 13, 12, 10, 8 array' },
+            { method: 'pointbuy' as const, icon: Calculator, name: 'Point Buy', desc: 'Customize with 27 points (8-15 range)' },
+            { method: 'manual' as const, icon: Edit3, name: 'Manual Entry', desc: 'Enter any scores directly' }
           ].map(({ method, icon: Icon, name, desc }) => (
             <button
               key={method}
               onClick={() => handleMethodChange(method)}
-              className={`p-4 rounded-lg border-2 transition-all text-left ${
+              className={`group p-5 rounded-lg border-2 transition-all text-left hover:shadow-md ${
                 abilityScores.method === method
-                  ? 'border-arcane-500 bg-arcane-50/50'
-                  : 'border-parchment-300 bg-parchment-50 hover:border-arcane-300'
+                  ? 'border-indigo-500 bg-indigo-50 shadow-sm'
+                  : 'border-gray-300 bg-white hover:border-indigo-300'
               }`}
             >
-              <div className="flex items-center gap-2 mb-2">
-                <Icon className="h-4 w-4 text-arcane-600" />
-                <span className="font-serif font-medium text-arcane-800">{name}</span>
+              <div className="flex items-center gap-3 mb-3">
+                <div className={`p-2 rounded-lg ${
+                  abilityScores.method === method
+                    ? 'bg-indigo-100 text-indigo-600'
+                    : 'bg-gray-100 text-gray-500 group-hover:bg-indigo-100 group-hover:text-indigo-600'
+                }`}>
+                  <Icon className="h-5 w-5" />
+                </div>
+                <span className="font-semibold text-gray-900">{name}</span>
               </div>
-              <p className="text-xs text-parchment-600">{desc}</p>
+              <p className="text-sm text-gray-600">{desc}</p>
             </button>
           ))}
         </div>
       </div>
 
-      {/* Point Buy Cost Display */}
+      {/* Modern Point Buy Display */}
       {abilityScores.method === 'pointbuy' && (
-        <div className="mb-4 p-3 bg-arcane-50 rounded-lg border border-arcane-200">
-          <div className="text-sm font-serif text-arcane-700">
-            Points Used: <span className="font-bold">{pointBuySpent}</span> / 27
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-sm font-medium text-blue-700">Point Buy Budget</span>
+            <span className="text-lg font-bold text-blue-900">{pointBuySpent} / 27</span>
           </div>
-          <div className="w-full bg-parchment-200 rounded-full h-2 mt-2">
+          <div className="w-full bg-blue-200 rounded-full h-3">
             <div 
-              className="bg-arcane-600 h-2 rounded-full transition-all duration-300"
+              className="bg-gradient-to-r from-blue-500 to-blue-600 h-3 rounded-full transition-all duration-300"
               style={{ width: `${(pointBuySpent / 27) * 100}%` }}
             />
           </div>
+          {pointBuySpent > 27 && (
+            <p className="text-sm text-red-600 mt-2 font-medium">⚠️ Exceeds point limit</p>
+          )}
         </div>
       )}
 
-      {/* Ability Score Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-        {abilities.map(ability => {
-          const score = abilityScores.scores[ability.shortName as keyof AbilityScoresType['scores']]
-          const modifier = Math.floor((score - 10) / 2)
-          
-          return (
-            <div key={ability.id} className="p-4 bg-parchment-50 rounded-lg border border-parchment-200">
-              <label className="block text-sm font-serif font-medium text-arcane-700 mb-2">
-                {ability.name} ({ability.shortName})
-              </label>
-              
-              <div className="flex items-center gap-3">
-                <input
-                  type="number"
-                  min={abilityScores.method === 'pointbuy' ? 8 : 3}
-                  max={abilityScores.method === 'pointbuy' ? 15 : 20}
-                  value={score}
-                  onChange={(e) => handleScoreChange(
-                    ability.shortName as keyof AbilityScoresType['scores'], 
-                    parseInt(e.target.value) || 8
-                  )}
-                  className="w-16 px-2 py-1 text-center border border-parchment-300 rounded font-mono text-lg focus:outline-none focus:ring-2 focus:ring-arcane-500"
-                />
-                
-                <div className="text-center min-w-[3rem]">
-                  <div className="text-xs text-parchment-600 font-serif">Modifier</div>
-                  <div className={`text-lg font-bold font-mono ${
-                    modifier >= 0 ? 'text-green-700' : 'text-red-700'
+      {/* Modern Ability Score Grid */}
+      <div className="space-y-4">
+        <h3 className="text-lg font-semibold text-gray-900">Ability Scores</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {abilities.map(ability => {
+            const score = abilityScores.scores[ability.shortName as keyof AbilityScoresType['scores']]
+            const modifier = Math.floor((score - 10) / 2)
+            
+            return (
+              <div key={ability.id} className="bg-gray-50 rounded-xl p-5 border border-gray-200 hover:shadow-sm transition-shadow">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <h4 className="font-semibold text-gray-900">{ability.name}</h4>
+                    <span className="text-sm text-gray-500 font-mono">{ability.shortName}</span>
+                  </div>
+                  <div className={`px-3 py-1 rounded-full text-sm font-bold ${
+                    modifier >= 0 
+                      ? 'bg-green-100 text-green-700' 
+                      : 'bg-red-100 text-red-700'
                   }`}>
                     {modifier >= 0 ? '+' : ''}{modifier}
                   </div>
                 </div>
+                
+                <div className="flex items-center space-x-3">
+                  <input
+                    type="number"
+                    min={abilityScores.method === 'pointbuy' ? 8 : 3}
+                    max={abilityScores.method === 'pointbuy' ? 15 : 20}
+                    value={score}
+                    onChange={(e) => handleScoreChange(
+                      ability.shortName as keyof AbilityScoresType['scores'], 
+                      parseInt(e.target.value) || 8
+                    )}
+                    className="flex-1 px-4 py-2 text-center text-xl font-bold border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  />
+                  <div className="text-center">
+                    <div className="text-xs text-gray-500 uppercase tracking-wide">Score</div>
+                    <div className="text-lg font-bold text-gray-900">{score}</div>
+                  </div>
+                </div>
               </div>
-            </div>
-          )
-        })}
+            )
+          })}
+        </div>
       </div>
 
-      {/* Standard Array Assignment Helper */}
+      {/* Modern Standard Array Helper */}
       {abilityScores.method === 'standard' && (
-        <div className="mt-4 p-4 bg-parchment-100 rounded-lg border border-parchment-300">
-          <h4 className="font-serif font-medium text-parchment-700 mb-2">Standard Array</h4>
-          <p className="text-sm text-parchment-600 mb-3">
-            Drag and drop or click to assign values: {STANDARD_ARRAY.join(', ')}
-          </p>
-          <div className="text-xs text-parchment-500">
-            Tip: Assign your highest scores (15, 14, 13) to your class's primary abilities.
+        <div className="bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200 rounded-lg p-6">
+          <div className="flex items-start space-x-4">
+            <div className="flex-shrink-0">
+              <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
+                <Dice6 className="w-5 h-5 text-indigo-600" />
+              </div>
+            </div>
+            <div className="flex-1">
+              <h4 className="font-semibold text-gray-900 mb-2">Standard Array Values</h4>
+              <div className="flex flex-wrap gap-2 mb-3">
+                {STANDARD_ARRAY.map((value, index) => (
+                  <span key={index} className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-white border border-indigo-200 text-indigo-700">
+                    {value}
+                  </span>
+                ))}
+              </div>
+              <p className="text-sm text-gray-600">
+                💡 <strong>Tip:</strong> Assign your highest scores (15, 14, 13) to your class's most important abilities for optimal performance.
+              </p>
+            </div>
           </div>
         </div>
       )}

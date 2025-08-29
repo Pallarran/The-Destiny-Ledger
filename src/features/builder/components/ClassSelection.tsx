@@ -81,27 +81,31 @@ export function ClassSelection({
   }
 
   return (
-    <div className="card-fantasy p-6">
-      <h3 className="text-xl font-serif font-bold text-arcane-800 mb-4">Class & Level Progression</h3>
+    <div className="space-y-8">
+      <div>
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">Class & Level Progression</h2>
+        <p className="text-gray-600">Build your character level by level</p>
+      </div>
       
-      {/* Current Level Display */}
-      <div className="mb-6 p-4 bg-arcane-50 rounded-lg border border-arcane-200">
+      {/* Modern Level Display */}
+      <div className="bg-gradient-to-r from-emerald-50 to-blue-50 rounded-xl p-6 border border-emerald-200">
         <div className="text-center">
-          <div className="text-3xl font-bold font-serif text-arcane-700 mb-1">
-            Level {currentLevel}
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-white rounded-full shadow-sm border-2 border-emerald-200 mb-4">
+            <span className="text-2xl font-bold text-emerald-600">{currentLevel}</span>
           </div>
-          <div className="text-sm text-arcane-600">
-            {canAddLevel ? 'Ready to add next level' : 'Maximum level reached'}
-          </div>
+          <h3 className="text-xl font-semibold text-gray-900 mb-1">Level {currentLevel}</h3>
+          <p className="text-gray-600">
+            {canAddLevel ? 'Ready to add your next level' : 'Maximum level reached (20)'}
+          </p>
         </div>
       </div>
 
-      {/* Class Selection for Next Level */}
+      {/* Modern Class Selection */}
       {canAddLevel && (
-        <div className="mb-6 p-4 bg-parchment-50 rounded-lg border border-parchment-200">
-          <h4 className="font-serif font-semibold text-arcane-800 mb-3">
+        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">
             Add Level {currentLevel}
-          </h4>
+          </h3>
           
           {/* Class Selection */}
           <div className="mb-4">
