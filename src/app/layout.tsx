@@ -3,7 +3,7 @@ import { Navigation } from '../components/Navigation'
 
 export function Layout() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-bg">
       <Navigation />
       <main className="relative">
         <Outlet />

@@ -22,7 +22,8 @@
       "Bash(git push:*)",
       "Bash(git commit:*)",
       "Bash(npx:*)",
-      "WebSearch"
+      "WebSearch",
+      "WebFetch(domain:github.com)"
     ],
     "deny": [],
     "ask": []

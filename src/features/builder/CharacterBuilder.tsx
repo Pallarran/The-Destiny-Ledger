@@ -102,16 +102,16 @@ export function CharacterBuilder() {
 
 
   return (
-    <div className="min-h-screen bg-bg">
-      {/* Dark Chrome Header from concept image */}
-      <div className="chrome-header">
+    <div className="min-h-screen">
+      {/* Page Header */}
+      <div className="border-b border-border-etch bg-panel/5">
         <div className="container mx-auto px-6 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className="w-10 h-10 rounded-full bg-accent-arcane/20 flex items-center justify-center border border-accent-arcane/30">
                 <ScrollText className="w-5 h-5 text-accent-arcane" />
               </div>
-              <h1 className="text-2xl font-serif font-bold text-panel tracking-tight">
+              <h1 className="text-2xl font-serif font-bold text-ink tracking-tight">
                 CHARACTER BUILDER
               </h1>
             </div>
